@@ -1,17 +1,10 @@
-use std::iter;
-use wgpu::{CommandEncoder, Surface, TextureFormat, TextureView};
-use winit::{
-  application::ApplicationHandler, 
-  dpi::PhysicalSize, 
-  event::{self, WindowEvent}, 
-  event_loop::{self, EventLoop}, 
-  keyboard::{KeyCode, PhysicalKey}, 
-  window::{self, Window}
-};
-use pollster::FutureExt as _;
+use winit::event_loop::EventLoop;
+
+mod my_window;
+mod window_state;
 
 
-
+/*
 struct App<'a> {
   initialized: bool,
   fields: Option<Fields<'a>>,
@@ -187,13 +180,13 @@ impl ApplicationHandler for App<'_> {
     }
   }
 }
-
+*/
 
 fn main() {
   println!("app is running");
   let my_event_loop: EventLoop<()> = EventLoop::new().unwrap();
   
-  let mut app = App::new();
+  let mut app = my_window::MyWindow::new(String::from("Title"), (600, 400), false);
 
   my_event_loop.run_app(&mut app).unwrap();
 }
