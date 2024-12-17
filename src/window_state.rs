@@ -1,5 +1,5 @@
 use std::{iter, sync::Arc};
-use wgpu::{Adapter, CommandEncoder, Surface, TextureFormat, TextureView};
+use wgpu::{Adapter, CommandEncoder, RenderPass, Surface, SurfaceTexture, TextureFormat, TextureView};
 use winit::{
   dpi::PhysicalSize, 
   event::WindowEvent, 
@@ -15,6 +15,7 @@ pub struct WindowSate {
   queue: wgpu::Queue,
   config: wgpu::SurfaceConfiguration,
   size: winit::dpi::PhysicalSize<u32>,
+  render_pipeline: wgpu::RenderPipeline,
   //window: Arc<Window>
 }
 
@@ -57,31 +58,34 @@ impl WindowSate {
       view_formats: vec![],
     };
 
+    let render_pipeline: wgpu::RenderPipeline = Self::get_render_pipeline(&device, &config);
+
     Self {
       surface,
       device,
       queue,
       config,
       size,
+      render_pipeline,
       //window
     }
   }
 
 
   pub fn render(&self, default_bg_color: wgpu::Color) -> Result<(), wgpu::SurfaceError> {
-    let output = self.surface.get_current_texture()?;
-    let view = output
+    let output: SurfaceTexture = self.surface.get_current_texture()?;
+    let view: TextureView = output
       .texture
       .create_view(&wgpu::TextureViewDescriptor::default());
 
-    let mut encoder = self
+    let mut encoder: CommandEncoder = self
       .device
       .create_command_encoder(&wgpu::CommandEncoderDescriptor {
         label: Some("Render Encoder"),
       });
 
     {
-      let _render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+      let mut render_pass: RenderPass<'_> = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
         label: Some("Render Pass"),
         color_attachments: &[Some(wgpu::RenderPassColorAttachment {
           view: &view,
@@ -95,6 +99,9 @@ impl WindowSate {
         occlusion_query_set: None,
         timestamp_writes: None,
       });
+    
+      render_pass.set_pipeline(&self.render_pipeline);
+      render_pass.draw(0..3, 0..1);
     }
 
     self.queue.submit(iter::once(encoder.finish()));
@@ -145,5 +152,57 @@ impl WindowSate {
     };
 
     adapter.request_device(&device_descriptor, None).block_on().unwrap()
+  }
+
+
+  fn get_render_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) -> wgpu::RenderPipeline { 
+    let shader = device.create_shader_module(wgpu::include_wgsl!("../res/shaders/shader.wgsl"));
+    let render_pipeline_layout = 
+      device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: Some("Render Pipeline Layout"),
+        bind_group_layouts: &[],
+        push_constant_ranges: &[],
+      });
+
+    let render_pipeline = 
+      device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: Some("Render Pipeline"),
+        layout: Some(&render_pipeline_layout),
+        vertex: wgpu::VertexState {
+          module: &shader,
+          entry_point: "vs_main",
+          buffers: &[],
+          compilation_options: wgpu::PipelineCompilationOptions::default(),
+        },
+        fragment: Some(wgpu::FragmentState {
+          module: &shader,
+          entry_point: "fs_main",
+          targets: &[Some(wgpu::ColorTargetState {
+            format: config.format,
+            blend: Some(wgpu::BlendState::REPLACE),
+            write_mask: wgpu::ColorWrites::ALL,
+          })],
+          compilation_options: wgpu::PipelineCompilationOptions::default(),
+        }),
+        primitive: wgpu::PrimitiveState {
+          topology: wgpu::PrimitiveTopology::TriangleList,
+          strip_index_format: None,
+          front_face: wgpu::FrontFace::Ccw,
+          cull_mode: Some(wgpu::Face::Back),
+          polygon_mode: wgpu::PolygonMode::Fill,
+          unclipped_depth: false,
+          conservative: false,
+        },
+        depth_stencil: None, 
+        multisample: wgpu::MultisampleState {
+          count: 1,
+          mask: !0,
+          alpha_to_coverage_enabled: false,
+        },
+        multiview: None,
+        cache: None,
+      });
+
+    return render_pipeline;
   }
 }

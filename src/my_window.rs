@@ -19,7 +19,7 @@ pub struct MyWindow {
 
 
 impl MyWindow {
-  const BACKGROUND_COLOR: wgpu::Color = wgpu::Color { r: 0.1, g: 0.1, b: 0.2, a: 1.0 };
+  const BACKGROUND_COLOR: wgpu::Color = wgpu::Color { r: 0.02, g: 0.02, b: 0.04, a: 1.0 };
 
 
   pub fn new(title: String, size: (u32, u32), full_screen:bool) -> Self {
