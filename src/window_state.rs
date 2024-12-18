@@ -1,12 +1,25 @@
 use std::{iter, sync::Arc};
-use wgpu::{Adapter, CommandEncoder, RenderPass, Surface, SurfaceTexture, TextureFormat, TextureView};
+
+use wgpu::{
+  Adapter, 
+  CommandEncoder, 
+  RenderPass, 
+  Surface, 
+  SurfaceTexture, 
+  TextureFormat, 
+  TextureView,
+  util::DeviceExt,
+};
 use winit::{
   dpi::PhysicalSize, 
   event::WindowEvent, 
-  keyboard::{KeyCode, PhysicalKey}, 
+  keyboard::{ KeyCode, PhysicalKey }, 
   window::Window
 };
 use pollster::FutureExt as _;
+
+use crate::vertex::{self, Vertex, VERTICES};
+use crate::params::graphical;
 
 
 pub struct WindowSate {
@@ -16,6 +29,8 @@ pub struct WindowSate {
   config: wgpu::SurfaceConfiguration,
   size: winit::dpi::PhysicalSize<u32>,
   render_pipeline: wgpu::RenderPipeline,
+  vertex_buffer: wgpu::Buffer,
+  num_vertices: u32,
   //window: Arc<Window>
 }
 
@@ -60,6 +75,14 @@ impl WindowSate {
 
     let render_pipeline: wgpu::RenderPipeline = Self::get_render_pipeline(&device, &config);
 
+    let vertex_buffer = device.create_buffer_init(
+      &wgpu::util::BufferInitDescriptor {
+          label: Some("Vertex Buffer"),
+          contents: bytemuck::cast_slice(vertex::VERTICES),
+          usage: wgpu::BufferUsages::VERTEX,
+      }
+    );
+
     Self {
       surface,
       device,
@@ -67,6 +90,8 @@ impl WindowSate {
       config,
       size,
       render_pipeline,
+      vertex_buffer,
+      num_vertices: VERTICES.len() as u32,
       //window
     }
   }
@@ -101,7 +126,8 @@ impl WindowSate {
       });
     
       render_pass.set_pipeline(&self.render_pipeline);
-      render_pass.draw(0..3, 0..1);
+      render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
+      render_pass.draw(0..self.num_vertices, 0..1);
     }
 
     self.queue.submit(iter::once(encoder.finish()));
@@ -171,7 +197,7 @@ impl WindowSate {
         vertex: wgpu::VertexState {
           module: &shader,
           entry_point: "vs_main",
-          buffers: &[],
+          buffers: &[Vertex::get_descriptor()],
           compilation_options: wgpu::PipelineCompilationOptions::default(),
         },
         fragment: Some(wgpu::FragmentState {

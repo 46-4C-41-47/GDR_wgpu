@@ -1,11 +1,15 @@
 use std::sync::Arc;
+
 use winit::{
   application::ApplicationHandler, 
   dpi::PhysicalSize, 
   event::{self, WindowEvent},
   keyboard::{KeyCode, PhysicalKey}
 };
-use crate::window_state::{self, WindowSate};
+
+use crate::window_state::{ self, WindowSate };
+use crate::params::graphical;
+
 
 
 pub struct MyWindow {
@@ -19,9 +23,6 @@ pub struct MyWindow {
 
 
 impl MyWindow {
-  const BACKGROUND_COLOR: wgpu::Color = wgpu::Color { r: 0.02, g: 0.02, b: 0.04, a: 1.0 };
-
-
   pub fn new(title: String, size: (u32, u32), full_screen:bool) -> Self {
     Self {
       title,
@@ -45,7 +46,7 @@ impl MyWindow {
   fn handle_redraw(&mut self, event_loop: &winit::event_loop::ActiveEventLoop) {
     self.window.as_ref().unwrap().request_redraw();
         
-    match self.window_state.as_ref().unwrap().render(Self::BACKGROUND_COLOR) {
+    match self.window_state.as_ref().unwrap().render(graphical::BACKGROUND_COLOR) {
       Ok(_) => {},
 
       Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) 

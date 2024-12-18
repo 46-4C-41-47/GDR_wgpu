@@ -1,0 +1,32 @@
+InputFlow :
+Représente les entrées saisies par le joueur sous forme de liste
+
+Fighter : 
+Représente un combattants dans un match
+Champs :
+  Nom
+  PV
+  Coordonnées
+  Dégats
+  Étourdissement
+  Liste d'actions
+
+Action
+Représente une acion faite par le personnage : attaque, guarde, dash...
+Les données d'une action sont stockées dans un fichier type JSON
+Champs :
+  Entrées
+  Hitboxs
+  Déplacements
+  Animation
+
+Animation
+Représente une suite d'image affichées les unes à la suite des autres pour créer un mouvement
+
+Match
+Représente un match et regroupe toutes les données d'un match
+Champs :
+  Temps Restant
+  
+Scene
+Représente le décor
