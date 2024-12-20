@@ -5,6 +5,22 @@ pub mod graphical {
 }
 
 
+pub enum KnockDownType {
+  HORIZONTAL,
+  DIAGONAL,
+  VERTICAL,
+  DOWN,
+}
+
+
+pub enum AttackType {
+  REGULAR,
+  SPECIAL,
+  SUPER,
+  ULTRA
+}
+
+
 pub enum ControllerInput {
   UP,
   DOWN,

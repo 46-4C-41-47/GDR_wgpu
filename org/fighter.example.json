@@ -1,0 +1,37 @@
+{
+  "id": 1,
+  "name": "Some powerful fighter",
+  "icon_path": "path/to/icon.png",
+  "photo_path": "path/to/photo.png",
+  "health": 100,
+  "super": 100,
+  "stun": 100,
+  "offensive_special_moves": [
+    {
+      "name": "Some powerful attack",
+      "path": "path/to/sprite_sheet.png",
+      "sprite_count": 5,
+      "cancelable_by": ["REGULAR", "SUPER", "ULTRA"],
+      "inputs": ["DOWN", "DIAGONAL_DOWN_RIGHT", "RIGHT", "L_PUNCH"],
+      "damage": 100,
+      "stun_strength": 1,
+      "super_consumption": 10,
+      "knockback_strength": 10,
+      "knockback_angle": 45,
+      "hitboxes": [
+        {"x": 0, "y": 0, "width": 32, "height": 32},
+        {"x": 32, "y": 0, "width": 32, "height": 32},
+        {"x": 64, "y": 0, "width": 32, "height": 32},
+        {"x": 96, "y": 0, "width": 32, "height": 32},
+        {"x": 128, "y": 0, "width": 32, "height": 32}
+      ],
+      "translation": [
+        {"x": 0, "y": 0},
+        {"x": 32, "y": 0},
+        {"x": 64, "y": 0},
+        {"x": 96, "y": 0},
+        {"x": 128, "y": 0}
+      ]
+    }
+  ]
+}

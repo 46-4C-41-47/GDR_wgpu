@@ -1,0 +1,33 @@
+Le joueur dispose de 1 sticks directionnel et 6 boutons.
+Boutons: poing léger, poing moyen, poing fort, pied léger, pied moyen, pied fort.
+Le joueur peut se déplacer de gauche à droite et sauter de manière verticale ou diagonale.
+
+Chaque personnage possède les coups énumérer ci-dessus, ainsi qu'un dash avant et arrière.
+
+Il exise aussi des coups spéciaux qui sont activé en rentrant une commande associé, ces coups 
+peuvent soit consommé soit remplir la bar de super.
+Il existe aussi des coups dit "spéciaux" qui sont très puissant et consomment la barre de super.
+Ces coups ne peuvent pas être annulés.
+Il existe aussi des coups enchainable qui sont des sortes de combos prédéfinis.
+
+Les coups peuvent être "annulable" c'est-à-dire si un coup est lancé pendant un premier coup
+alors le deuxième annule le premier avant sa fin. Tous les coups ne sont pas annulable et quand
+ils le sont il le sont que par une ou plusieurs catégorie d'attaque.
+
+Le joueur a trois barres associés : la barre de vie, la barre de super et la barre d'étoursissment.
+La barre de vie est décrémentée à chaque coup encaissé, une fois vide le combat est perdu.
+La barre de super est remplie ou vider par certains coups.
+La barre d'étoursissement augmente à chaque coup encaissé et une fois pleine le joueur est étourdi 
+et ne peut plus attaquer pendant un certain temps.
+
+Lorsque le joueur lance un coup il y a un temps de préparation ainsi qu'un temps de récupération. Si le 
+joueur annule son coup alors il passe outre le temps de récupération et peur enchainer (c'est un combo).
+
+Quand il est au corps à corps le joueur peut lancer un pam en attrapant son adversaire, de là il peut le
+frapper par des coups de genoux. Pour sortir du pam le joueur peut soit se séparer avec la possibilité
+de donner un coup de coude ou alors il peut projeter son adversaire.
+
+Pour défendre le joueur peut se mettre en guarde, ce qui bloque les coups de l'adversaire mais le 
+paralyse pendant un court instant empechant de contre-attquer, si le coup absorbé est puissant alors le
+joueur peut absorbé de léger dégat malgré le blocage. Le joueur peut aussi faire une parade au bon moment 
+ce qui lui permet de ne pas être paralysé et de contre-attaquer instantanément mais est risqué.

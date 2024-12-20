@@ -12,12 +12,28 @@ Champs :
   Liste d'actions
 
 Action
-Représente une acion faite par le personnage : attaque, guarde, dash...
+Représente une action faite par le personnage : attaque, guarde, dash...
 Les données d'une action sont stockées dans un fichier type JSON
+Le fichier JSON contient les informations suivantes :
+  Nom
+  Nombre de sprite
+  Type d'attaque
+  Chemin vers la feuille de sprite
+  Hitboxs pour chaque frame
+  Les déplacements à chaque frame
+  Temps entre chaque frame
+  Temps de cooldown
+  Par quel type de coup peut annulé 
+  Dégats
+  Comsomation de super
+  Force du recul
+  Angle du recul
+  Dégats d'étourdissement
 Champs :
   Entrées
   Hitboxs
   Déplacements
+  Annulable
   Animation
 
 Animation
@@ -27,6 +43,8 @@ Match
 Représente un match et regroupe toutes les données d'un match
 Champs :
   Temps Restant
+  Rounds remportés
+  scores
   
 Scene
 Représente le décor
