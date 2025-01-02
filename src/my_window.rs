@@ -22,6 +22,7 @@ pub struct MyWindow {
 }
 
 
+
 impl MyWindow {
   pub fn new(title: String, size: (u32, u32), full_screen:bool) -> Self {
     Self {
@@ -44,7 +45,8 @@ impl MyWindow {
 
 
   fn handle_redraw(&mut self, event_loop: &winit::event_loop::ActiveEventLoop) {
-    self.window.as_ref().unwrap().request_redraw();
+    //self.window.as_ref().unwrap().request_redraw();
+    println!("Redraw requested");
         
     match self.window_state.as_ref().unwrap().render(graphical::BACKGROUND_COLOR) {
       Ok(_) => {},
@@ -61,6 +63,7 @@ impl MyWindow {
     }
   }
 }
+
 
 
 impl ApplicationHandler for MyWindow {
@@ -125,4 +128,3 @@ impl ApplicationHandler for MyWindow {
     }
   }
 }
-

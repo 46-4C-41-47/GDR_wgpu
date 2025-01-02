@@ -1,14 +1,7 @@
 use std::{iter, sync::Arc};
 
 use wgpu::{
-  Adapter, 
-  CommandEncoder, 
-  RenderPass, 
-  Surface, 
-  SurfaceTexture, 
-  TextureFormat, 
-  TextureView,
-  util::DeviceExt,
+  util::DeviceExt, Adapter, BindGroupLayout, CommandEncoder, RenderPass, Surface, SurfaceTexture, TextureFormat, TextureView
 };
 use winit::{
   dpi::PhysicalSize, 
@@ -18,7 +11,11 @@ use winit::{
 };
 use pollster::FutureExt as _;
 
-use crate::vertex::{self, Vertex, VERTICES};
+use crate::{
+  texture::{self, Texture}, 
+  vertex::{self, Vertex, QUAD}, 
+  camera::{ self, Camera }
+};
 use crate::params::graphical;
 
 
@@ -31,7 +28,8 @@ pub struct WindowSate {
   render_pipeline: wgpu::RenderPipeline,
   vertex_buffer: wgpu::Buffer,
   num_vertices: u32,
-  //window: Arc<Window>
+  texture: Texture,
+  camera: camera::Camera,
 }
 
 
@@ -73,13 +71,20 @@ impl WindowSate {
       view_formats: vec![],
     };
 
-    let render_pipeline: wgpu::RenderPipeline = Self::get_render_pipeline(&device, &config);
+    let texture: Texture = Texture::new("./res/textures/standing_sagat.png", &device, &queue);
+    let camera: Camera = Camera::new(&device);
+
+    let render_pipeline: wgpu::RenderPipeline = Self::get_render_pipeline(
+      &device, 
+      &config, 
+      &[texture.get_bind_group_layout(), camera.get_bind_group_layout()]
+    );
 
     let vertex_buffer = device.create_buffer_init(
       &wgpu::util::BufferInitDescriptor {
-          label: Some("Vertex Buffer"),
-          contents: bytemuck::cast_slice(vertex::VERTICES),
-          usage: wgpu::BufferUsages::VERTEX,
+        label: Some("Vertex Buffer"),
+        contents: bytemuck::cast_slice(vertex::QUAD),
+        usage: wgpu::BufferUsages::VERTEX,
       }
     );
 
@@ -91,8 +96,9 @@ impl WindowSate {
       size,
       render_pipeline,
       vertex_buffer,
-      num_vertices: VERTICES.len() as u32,
-      //window
+      num_vertices: QUAD.len() as u32,
+      texture,
+      camera,
     }
   }
 
@@ -126,6 +132,8 @@ impl WindowSate {
       });
     
       render_pass.set_pipeline(&self.render_pipeline);
+      render_pass.set_bind_group(0, self.texture.get_bind_group(), &[]);
+      render_pass.set_bind_group(1, &self.camera.get_bind_group(), &[]);
       render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
       render_pass.draw(0..self.num_vertices, 0..1);
     }
@@ -181,17 +189,21 @@ impl WindowSate {
   }
 
 
-  fn get_render_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) -> wgpu::RenderPipeline { 
+  fn get_render_pipeline(
+    device: &wgpu::Device, 
+    config: &wgpu::SurfaceConfiguration, 
+    bind_group_layout: &[&BindGroupLayout]
+  ) -> wgpu::RenderPipeline { 
     let shader = device.create_shader_module(wgpu::include_wgsl!("../res/shaders/shader.wgsl"));
-    let render_pipeline_layout = 
-      device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+    let render_pipeline_layout = device.create_pipeline_layout(
+      &wgpu::PipelineLayoutDescriptor {
         label: Some("Render Pipeline Layout"),
-        bind_group_layouts: &[],
+        bind_group_layouts: bind_group_layout,
         push_constant_ranges: &[],
       });
 
-    let render_pipeline = 
-      device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+    let render_pipeline = device.create_render_pipeline(
+      &wgpu::RenderPipelineDescriptor {
         label: Some("Render Pipeline"),
         layout: Some(&render_pipeline_layout),
         vertex: wgpu::VertexState {
@@ -205,7 +217,7 @@ impl WindowSate {
           entry_point: "fs_main",
           targets: &[Some(wgpu::ColorTargetState {
             format: config.format,
-            blend: Some(wgpu::BlendState::REPLACE),
+            blend: Some(wgpu::BlendState::ALPHA_BLENDING),
             write_mask: wgpu::ColorWrites::ALL,
           })],
           compilation_options: wgpu::PipelineCompilationOptions::default(),
@@ -213,7 +225,7 @@ impl WindowSate {
         primitive: wgpu::PrimitiveState {
           topology: wgpu::PrimitiveTopology::TriangleList,
           strip_index_format: None,
-          front_face: wgpu::FrontFace::Ccw,
+          front_face: wgpu::FrontFace::Cw,
           cull_mode: Some(wgpu::Face::Back),
           polygon_mode: wgpu::PolygonMode::Fill,
           unclipped_depth: false,
