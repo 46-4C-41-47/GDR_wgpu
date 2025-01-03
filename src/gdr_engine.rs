@@ -1,5 +1,3 @@
-use wgpu::core::device;
-
 struct Character {
   name: String
 }
