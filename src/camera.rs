@@ -38,20 +38,18 @@ impl Camera {
   fn create_buffer(device: &wgpu::Device) -> wgpu::Buffer {
     let camera_uniform: CameraUniform = CameraUniform { view_proj: Self::get_matrix().into() };
 
-    let camera_buffer: wgpu::Buffer = device.create_buffer_init(
+    return device.create_buffer_init(
       &wgpu::util::BufferInitDescriptor {
         label: Some("Camera Buffer"),
         contents: bytemuck::cast_slice(&[camera_uniform]),
         usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
       }
     );
-
-    camera_buffer
   }
 
 
   fn create_bind_group_layout(device: &wgpu::Device) -> wgpu::BindGroupLayout {
-    let bind_group_layout: wgpu::BindGroupLayout = device.create_bind_group_layout(
+    return device.create_bind_group_layout(
       &wgpu::BindGroupLayoutDescriptor {
         entries: &[
           wgpu::BindGroupLayoutEntry {
@@ -68,16 +66,15 @@ impl Camera {
         label: Some("Camera Bind Group Layout"),
       }
     );
-
-    bind_group_layout
   }
+  
 
   fn create_bind_group(
     device: &wgpu::Device, 
     layout: &wgpu::BindGroupLayout, 
     buffer: &wgpu::Buffer
   ) -> wgpu::BindGroup { 
-    let bind_group: wgpu::BindGroup = device.create_bind_group(
+    return device.create_bind_group(
       &wgpu::BindGroupDescriptor {
         layout: &layout,
         entries: &[
@@ -89,8 +86,6 @@ impl Camera {
         label: Some("camera_bind_group"),
       }
     );
-
-    bind_group
   }
 
 
@@ -109,6 +104,7 @@ impl Camera {
 
     return Self::OPENGL_TO_WGPU_MATRIX * proj * view;
   }
+
 
   pub fn get_bind_group(&self) -> &wgpu::BindGroup { &self.bind_group }
 
