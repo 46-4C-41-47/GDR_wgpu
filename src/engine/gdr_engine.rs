@@ -11,12 +11,35 @@ use wgpu::{
   TextureView 
 };
 
-use crate::my_match::Match;
+use crate::engine::my_match::Match;
 
-pub struct Character(String);
+pub struct CharacterFile(String);
 
 
 pub struct Stage(String);
+
+
+pub enum Input {
+  Neutral,
+  
+  Up,
+  Down,
+  Front,
+  Back,
+
+  UpFront,
+  UpBack,
+  DownFront,
+  DownBack,
+
+  LightPunch,
+  MediumPunch,
+  HeavyPunch,
+
+  LightKick,
+  MediumKick, 
+  HeavyKick,
+}
 
 
 pub enum TimeLimit {
@@ -45,8 +68,8 @@ pub enum WinType {
 
 
 pub struct MatchDescriptior {
-  left_team: Vec<Character>,
-  right_team: Vec<Character>,
+  left_team: Vec<CharacterFile>,
+  right_team: Vec<CharacterFile>,
   stage: Stage,
   time_limit: TimeLimit,
   rounds: RoundType,

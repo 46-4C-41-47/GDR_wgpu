@@ -6,9 +6,15 @@ mod window_state;
 mod vertex;
 mod params;
 mod texture;
-mod gdr_engine;
 mod camera;
-mod my_match;
+mod engine {
+  pub mod gdr_engine;
+  mod my_match;
+  mod character;
+  mod action;
+  mod hitbox;
+  mod animation;
+}
 
 
 // manette -> gilrs
