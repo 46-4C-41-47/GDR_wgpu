@@ -1,6 +1,7 @@
 #[derive(Copy, Clone, PartialEq)]
 pub enum HitboxType {
   Attack,
+  Hurt,
   Guard,
   Grab,
   Body,
@@ -39,4 +40,27 @@ impl Hitbox {
   pub fn get_square(&self) -> &Square { &self.square }
 
   pub fn get_hitbox_type(&self) -> HitboxType { self.type_ }
+}
+
+
+pub struct FrameHitbox {
+  pub hitboxes: Vec<Hitbox>,
+}
+
+
+impl FrameHitbox {
+  pub fn new() -> Self {
+    Self { hitboxes: Vec::new() }
+  }
+
+
+  pub fn get_attack_hitbox(&self) -> Option<Vec<Hitbox>> { todo!() }
+
+  pub fn get_grab_hitbox(&self) -> Option<Vec<Hitbox>> { todo!() }
+
+  pub fn get_hurt_hitbox(&self) -> Option<Vec<Hitbox>> { todo!() }
+
+  pub fn get_guard_hitbox(&self) -> Option<Vec<Hitbox>> { todo!() }
+
+  pub fn get_body_hitbox(&self) -> Option<Vec<Hitbox>> { todo!() }
 }

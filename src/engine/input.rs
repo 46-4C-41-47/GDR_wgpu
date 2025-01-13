@@ -4,16 +4,16 @@ use super::{
 };
 
 
-pub struct InputDevice(u32);
+pub struct InputDevice();
 
 
-pub struct InputFlow {
+pub struct CommandInterpreter {
   actions: Vec<Action>,
   input_device: InputDevice,
 }
 
 
-impl InputFlow {
+impl CommandInterpreter {
   pub fn new(input_device: InputDevice, actions: Vec<Action>) -> Self { 
     Self { 
       input_device,

@@ -1,31 +1,38 @@
 use super::gdr_engine::Input;
-use super::hitbox::Hitbox;
+use super::hitbox::{FrameHitbox, Hitbox};
+
+
+#[derive(Copy, Clone)]
+pub struct CommandPattern();
 
 
 pub struct Action {
+  name: String,
   frame_count: u32,
   frame_index: u32,
-  command: Vec<Vec<Input>>,
-  hitbox: Vec<Vec<Hitbox>>,
+  command: CommandPattern,
+  hitboxes: Vec<FrameHitbox>,
 }
 
 
 impl Action {
   pub fn new(json: String) -> Self { 
     Self {
+      name: String::from(""),
       frame_count: 1,
       frame_index: 1,
-      command: Vec::new(),
-      hitbox: Vec::new(),
+      command: CommandPattern(),
+      hitboxes: Vec::new(),
     } 
   }
 
 
-  pub fn get_current_frame_hitbox(&self) -> Vec<Hitbox> { todo!() }
+  pub fn next(&mut self) -> bool { todo!() }
+
+
+  pub fn get_name(&self) -> &String { &self.name }
+
+  pub fn get_hitbox(&self) -> &FrameHitbox { &self.hitboxes[self.frame_index as usize] }
   
-  
-  pub fn next_frame(&mut self) { todo!() }
-  
-  
-  pub fn get_command(&self) -> Vec<Vec<Input>> { self.command.clone() }
+  pub fn get_command(&self) -> &CommandPattern { &self.command }
 }
