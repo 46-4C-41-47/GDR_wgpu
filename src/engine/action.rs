@@ -22,7 +22,10 @@ impl Action {
 
 
   pub fn get_current_frame_hitbox(&self) -> Vec<Hitbox> { todo!() }
-
-
+  
+  
   pub fn next_frame(&mut self) { todo!() }
+  
+  
+  pub fn get_command(&self) -> Vec<Vec<Input>> { self.command.clone() }
 }

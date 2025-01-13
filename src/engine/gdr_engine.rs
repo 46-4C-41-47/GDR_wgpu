@@ -19,6 +19,7 @@ pub struct CharacterFile(String);
 pub struct Stage(String);
 
 
+#[derive(Copy, Clone)]
 pub enum Input {
   Neutral,
   

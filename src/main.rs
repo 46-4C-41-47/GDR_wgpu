@@ -14,6 +14,7 @@ mod engine {
   mod action;
   mod hitbox;
   mod animation;
+  mod input;
 }
 
 
