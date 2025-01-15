@@ -19,19 +19,28 @@ pub struct CharacterFile(String);
 pub struct Stage(String);
 
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, Hash, PartialEq)]
 pub enum Input {
   Neutral,
   
   Up,
   Down,
-  Front,
-  Back,
+  Forward,
+  Backward,
 
-  UpFront,
-  UpBack,
-  DownFront,
-  DownBack,
+  UpForward,
+  UpBackward,
+  DownForward,
+  DownBackward,
+
+  QuarterForward,
+  QuarterBackward,
+  HalfForward,
+  HalfBackward,
+  ZForward,
+  ZBackward,
+  CircleForward,
+  CircleBackward,
 
   LightPunch,
   MediumPunch,

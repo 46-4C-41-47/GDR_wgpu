@@ -1,20 +1,17 @@
-use super::{
-  action::Action, 
-  gdr_engine::Input,
-};
+use super::{action::CommandPattern, gdr_engine::Input};
 
 
 pub struct InputDevice();
 
 
 pub struct CommandInterpreter {
-  actions: Vec<Action>,
   input_device: InputDevice,
+  actions: Vec<CommandPattern>,
 }
 
 
 impl CommandInterpreter {
-  pub fn new(input_device: InputDevice, actions: Vec<Action>) -> Self { 
+  pub fn new(input_device: InputDevice, actions: Vec<CommandPattern>) -> Self { 
     Self { 
       input_device,
       actions,
@@ -22,5 +19,5 @@ impl CommandInterpreter {
   }
 
 
-  pub fn get_command(&self) -> Option<u32> { todo!() }
+  pub fn get_command(&self) -> CommandPattern { CommandPattern(vec![vec![Input::Neutral]]) }
 }

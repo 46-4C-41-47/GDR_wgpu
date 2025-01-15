@@ -49,41 +49,52 @@
 //   fn grabbing(&mut self) { todo!() }
 // }
 
-use super::{action::Action, input::{CommandInterpreter, InputDevice}};
+use super::{action::{self, ActionSet, CommandPattern}, input::{CommandInterpreter, InputDevice}};
 
 
-pub struct Character<'a> {
+struct Point2D {
+  pub x: f32,
+  pub y: f32,
+}
+
+impl Point2D {
+  pub fn translate(&mut self, vector: &Vector2D) {
+    self.x += vector.x;
+    self.y += vector.y;
+  }
+}
+
+
+struct Vector2D {
+  pub x: f32,
+  pub y: f32,
+}
+
+
+pub struct Character {
   health: u32,
-  actions: Vec<Action>,
-  current_action: Option<&'a mut Action>,
+  location: Point2D,
+  direction: Vector2D,
+  actions: ActionSet,
   command_interpreter: CommandInterpreter,
 }
 
 
-impl Character<'_> {
-  const DEFAULT_ACTION: Action = Action::new(String::from("Idle"));
-
-
+impl Character {
   pub fn new() -> Self {
-    //let actions = Vec::new();
-
     Self {
       health: 0,
-      actions: Vec::new(),
-      current_action: None,
+      location: Point2D{ x: 0.0, y: 0.0 },
+      direction: Vector2D{ x: 0.0, y: 0.0 },
+      actions: ActionSet::new(String::from("")),
       command_interpreter: CommandInterpreter::new(InputDevice(), Vec::new()),
     }
   }
 
 
   pub fn next(&mut self) {
-    if self.current_action.is_none() || !self.current_action.unwrap().next() {
-      self.current_action = self.get_action("Idle");
-    }
-  }
-
-
-  fn get_action(&self, name: &str) -> Option<& mut Action> { 
-    Some(self.actions.iter().find(|action| action.get_name() == name).unwrap()) 
+    self.location.translate(&self.direction);
+    let command: CommandPattern = self.command_interpreter.get_command();
+    self.actions.next(command);
   }
 }
