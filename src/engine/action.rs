@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 use std::vec;
 
+use super::character::StateModification;
 use super::gdr_engine::Input;
+use super::geometry::Vector2D;
 use super::hitbox::FrameHitbox;
 
 
@@ -84,12 +86,17 @@ impl ActionSet {
   }
 
 
-  pub fn next(&mut self, command: CommandPattern) {
+  pub fn next(&mut self, command: CommandPattern) -> StateModification {
     if !self.actions.get_mut(&self.current).unwrap().draw_next() {
       self.reset();
     }
 
     self.current = command;
+
+    StateModification {
+      health_substraction: 0,
+      movement: Vector2D{ x: 0.0, y: 0.0 },
+    }
   }
 
 
@@ -118,6 +125,7 @@ struct Action {
   frame_index: u32,
   command: CommandPattern,
   hitboxes: Vec<FrameHitbox>,
+  state_modification: StateModification,
 }
 
 impl Action {
@@ -128,6 +136,7 @@ impl Action {
       frame_index: 0,
       command: descriptor.command,
       hitboxes: descriptor.hitboxes,
+      state_modification: StateModification{ health_substraction: 0, movement: Vector2D{ x: 0.0, y: 0.0 } },
     } 
   }
 

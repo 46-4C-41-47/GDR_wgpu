@@ -115,8 +115,6 @@ pub struct GdrEngine<'a> {
   surface: &'a wgpu::Surface<'a>,
   device: &'a wgpu::Device,
   queue: &'a wgpu::Queue,
-
-  drawables: Vec<Box<dyn Draw>>,
 }
 
 impl<'a> GdrEngine<'a> {
@@ -125,7 +123,7 @@ impl<'a> GdrEngine<'a> {
     device: &'a wgpu::Device,
     queue: &'a wgpu::Queue,
   ) -> Self { 
-    GdrEngine { surface, device, queue, drawables: Vec::new() }
+    GdrEngine { surface, device, queue }
   }
 
 
@@ -133,6 +131,7 @@ impl<'a> GdrEngine<'a> {
     let mut current_match: Match = self.initialize_match(match_to_create);
 
     loop {
+      let start: Instant = Instant::now();
       let match_result: Option<MatchResult> = current_match.play();
 
       match match_result {
@@ -140,8 +139,6 @@ impl<'a> GdrEngine<'a> {
         None => (),
       }
 
-      let start: Instant = Instant::now();
-      self.render().unwrap();
       let elapsed: Duration = Instant::now() - start;
       sleep(TIME_BETWEEN_FRAMES - elapsed);
     }
@@ -150,45 +147,5 @@ impl<'a> GdrEngine<'a> {
 
   fn initialize_match(&self, match_to_create: MatchDescriptior) -> Match {
     todo!()
-  }
-
-
-  fn render(&self) -> Result<(), wgpu::SurfaceError> {
-    let output: SurfaceTexture = self.surface.get_current_texture()?;
-    let view: TextureView = output
-      .texture
-      .create_view(&wgpu::TextureViewDescriptor::default());
-
-    let mut encoder: CommandEncoder = self
-      .device
-      .create_command_encoder(&wgpu::CommandEncoderDescriptor {
-        label: Some("Render Encoder"),
-      });
-
-    {
-      let mut render_pass: RenderPass<'_> = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-        label: Some("Render Pass"),
-        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-          view: &view,
-          resolve_target: None,
-          ops: wgpu::Operations {
-            load: wgpu::LoadOp::Clear(DEFAULT_BG_COLOR),
-            store: wgpu::StoreOp::Store,
-          },
-        })],
-        depth_stencil_attachment: None,
-        occlusion_query_set: None,
-        timestamp_writes: None,
-      });
-
-      for drawable in &self.drawables {
-        drawable.draw(&mut render_pass);
-      }
-    }
-
-    self.queue.submit(iter::once(encoder.finish()));
-    output.present();
-
-    Ok(())
   }
 }

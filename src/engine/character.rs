@@ -49,25 +49,12 @@
 //   fn grabbing(&mut self) { todo!() }
 // }
 
-use super::{action::{self, ActionSet, CommandPattern}, input::{CommandInterpreter, InputDevice}};
+use super::{action::{self, ActionSet, CommandPattern}, geometry::{Point2D, Vector2D}, input::{CommandInterpreter, InputDevice}};
 
 
-struct Point2D {
-  pub x: f32,
-  pub y: f32,
-}
-
-impl Point2D {
-  pub fn translate(&mut self, vector: &Vector2D) {
-    self.x += vector.x;
-    self.y += vector.y;
-  }
-}
-
-
-struct Vector2D {
-  pub x: f32,
-  pub y: f32,
+pub struct StateModification {
+  pub health_substraction: u32,
+  pub movement: Vector2D,
 }
 
 
@@ -75,17 +62,22 @@ pub struct Character {
   health: u32,
   location: Point2D,
   direction: Vector2D,
+  is_airborne: bool,
   actions: ActionSet,
   command_interpreter: CommandInterpreter,
 }
 
 
 impl Character {
+  const GRAVITY: Vector2D = Vector2D{ x: 0.0, y: -0.1 };
+
+
   pub fn new() -> Self {
     Self {
       health: 0,
       location: Point2D{ x: 0.0, y: 0.0 },
       direction: Vector2D{ x: 0.0, y: 0.0 },
+      is_airborne: false,
       actions: ActionSet::new(String::from("")),
       command_interpreter: CommandInterpreter::new(InputDevice(), Vec::new()),
     }
@@ -93,8 +85,34 @@ impl Character {
 
 
   pub fn next(&mut self) {
-    self.location.translate(&self.direction);
+    self.run_physics();
     let command: CommandPattern = self.command_interpreter.get_command();
-    self.actions.next(command);
+
+    if !self.is_airborne {
+      let modification: StateModification = self.actions.next(command);
+      self.apply_state_modification(modification);
+    }
+  }
+
+
+  fn apply_state_modification(&mut self, state_modification: StateModification) {
+    self.health -= state_modification.health_substraction;
+    self.direction = state_modification.movement;
+  }
+
+
+  fn run_physics(&mut self) {
+    self.location.translate(&self.direction);
+
+    if self.is_airborne {
+      self.direction.apply(&Self::GRAVITY);
+    } else {
+      self.direction = Vector2D{ x: 0.0, y: 0.0 };
+    }
+
+    if self.location.y < 0.0 {
+      self.location.y = 0.0;
+      self.is_airborne = false;
+    }
   }
 }

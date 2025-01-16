@@ -17,7 +17,7 @@ struct VertexOutput {
 };
 
 @vertex
-fn vs_main(model: VertexInput,) -> VertexOutput {
+fn vs_main(model: VertexInput) -> VertexOutput {
     var out: VertexOutput;
     out.texture_coords = model.texture_coords;
     out.clip_position = camera.matrix * vec4<f32>(model.position, 1.0);

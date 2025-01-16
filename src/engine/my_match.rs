@@ -25,21 +25,26 @@ impl Match {
   }
 
 
-  pub fn play(&mut self) -> Option<MatchResult> {
-    for left_character in &self.team_left {
-      for right_character in &self.team_right {
-        let a = Self::check_collisions(
-          &left_character.get_hitbox(), 
-          &right_character.get_hitbox()
-        );
-        let b = Self::check_collisions(
-          &right_character.get_hitbox(), 
-          &left_character.get_hitbox()
-        );
+  // pub fn play(&mut self) -> Option<MatchResult> {
+  //   for left_character in &self.team_left {
+  //     for right_character in &self.team_right {
+  //       let a = Self::check_collisions(
+  //         &left_character.get_hitbox(), 
+  //         &right_character.get_hitbox()
+  //       );
+  //       let b = Self::check_collisions(
+  //         &right_character.get_hitbox(), 
+  //         &left_character.get_hitbox()
+  //       );
         
-      }
-    }
+  //     }
+  //   }
 
+  //   return None;
+  // }
+
+
+  pub fn play(&mut self) -> Option<MatchResult> {
     return None;
   }
 

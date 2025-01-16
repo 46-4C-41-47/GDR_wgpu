@@ -15,6 +15,12 @@ mod engine {
   mod hitbox;
   mod animation;
   mod input;
+  mod geometry;
+  mod graphical {
+    mod panel;
+    mod texture;
+    mod render_pipeline;
+  }
 }
 
 
